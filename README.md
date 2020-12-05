@@ -2,7 +2,15 @@
 # Quote Api
 
 ```
-$ source .venv/bin/activate
+$ python -m venv .venv
+```
+
+```
+$ .venv/bin/activate
+```
+
+```
+$ pip install -r requirements.txt
 ```
 
 ## Useful commands
