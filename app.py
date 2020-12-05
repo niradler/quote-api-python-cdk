@@ -2,10 +2,10 @@
 
 from aws_cdk import core
 
-from infra.infra_stack import InfraStack
+from infra.quote_api_stack import QuoteApiStack
 
 
 app = core.App()
-InfraStack(app, "infra", env={'region': 'us-west-2'})
+QuoteApiStack(app, "quote-stack", env={'region': 'us-east-1'})
 
 app.synth()
