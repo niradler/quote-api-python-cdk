@@ -2,7 +2,7 @@
 
 from aws_cdk import core
 
-from infra.quote_api_stack import QuoteApiStack
+from stacks.quote_api_stack import QuoteApiStack
 
 
 app = core.App()
