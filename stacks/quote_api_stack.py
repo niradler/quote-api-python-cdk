@@ -34,23 +34,41 @@ class QuoteApiStack(core.Stack):
 
         base_api = aws_apigateway.RestApi(self, 'quote_api',
                                           rest_api_name='quote_api')
+
         self.add_resource(base_api, 'quote', 'GET',
                           'app.handler_get_quote', 'get_quote')
         self.add_resource(base_api, 'languages', 'GET',
                           'app.handler_get_languages', 'get_languages')
+
+        admin_api_key = aws_apigateway.ApiKey(
+            self,
+            id="quote-admin-api-key",
+            api_key_name="quote-admin",
+            description="quote-admin",
+            enabled=True
+        )
+
+        usage_plan = aws_apigateway.UsagePlan(self,
+                                              name="quote-admin",
+                                              id="quote-admin-usage-plan",
+                                              api_key=admin_api_key,
+                                              api_stages=[
+                                                  {"api": base_api, "stage": base_api.deployment_stage}],
+                                              throttle={"burst_limit": 500, "rate_limit": 1000}, quota={"limit": 10000000, "period": aws_apigateway.Period("MONTH")}
+                                              )
 
     def add_resource(self, base, resource, method, handler, name):
         lambda_function = aws_lambda.Function(self, name,
                                               handler=handler,
                                               runtime=aws_lambda.Runtime.PYTHON_3_8,
                                               code=aws_lambda.Code.asset(
-                                                  'handlers/demo'),
+                                                  'handlers/quote'),
                                               layers=[
                                                   self.dependencies_layer
                                               ]
                                               )
         api_entity = base.root.add_resource(resource)
-        entity_lambda_integration = aws_apigateway.LambdaIntegration(lambda_function, proxy=False, integration_responses=integration_responses
+        entity_lambda_integration = aws_apigateway.LambdaIntegration(lambda_function, proxy=True, integration_responses=integration_responses
                                                                      )
         api_entity.add_method(method, entity_lambda_integration,
                               method_responses=method_responses

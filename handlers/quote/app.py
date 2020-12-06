@@ -13,14 +13,18 @@ headers = {
 
 def handler_get_quote(event, context):
     LOG.info("EVENT: " + json.dumps(event))
-    # language = event["queryStringParameters"]["language"] or "en"
     language = 'en'
+    try:
+        language = event["queryStringParameters"]["language"] or language
+    except:
+        pass
+
     r = requests.get(
         'https://quotes.rest/qod?language={}'.format(language), headers=headers)
 
     return {
         'statusCode': r.status_code,
-        'body': r.json()
+        'body': r.text
     }
 
 
@@ -30,5 +34,5 @@ def handler_get_languages(event, context):
 
     return {
         'statusCode': r.status_code,
-        'body': r.json()
+        'body': r.text
     }
