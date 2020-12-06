@@ -71,7 +71,7 @@ class QuoteApiStack(core.Stack):
         entity_lambda_integration = aws_apigateway.LambdaIntegration(lambda_function, proxy=True, integration_responses=integration_responses
                                                                      )
         api_entity.add_method(method, entity_lambda_integration,
-                              method_responses=method_responses
+                              method_responses=method_responses,
                               )
 
         self.add_cors_options(api_entity)
