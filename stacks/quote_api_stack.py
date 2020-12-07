@@ -32,6 +32,10 @@ class QuoteApiStack(core.Stack):
         self.dependencies_layer = self.create_dependencies_layer(
             self.stack_name)
 
+        # api = aws_apigateway.SpecRestApi(self, "books-api",
+        #     api_definition=aws_apigateway.ApiDefinition.from_asset("./stacks/quote_api.json"),
+        #     endpoint_types=[aws_apigateway.EndpointType.PRIVATE]
+        # )
         base_api = aws_apigateway.RestApi(self, 'quote_api',
                                           rest_api_name='quote_api')
 
@@ -68,11 +72,17 @@ class QuoteApiStack(core.Stack):
                                               ]
                                               )
         api_entity = base.root.add_resource(resource)
-        entity_lambda_integration = aws_apigateway.LambdaIntegration(lambda_function, proxy=True, integration_responses=integration_responses
-                                                                     )
-        api_entity.add_method(method, entity_lambda_integration,
-                              method_responses=method_responses,
-                              )
+        entity_lambda_integration = aws_apigateway.LambdaIntegration(
+            lambda_function,
+            proxy=True,
+            integration_responses=integration_responses
+        )
+        api_entity.add_method(
+            method,
+            entity_lambda_integration,
+            api_key_required=True,
+            method_responses=method_responses,
+        )
 
         self.add_cors_options(api_entity)
 
